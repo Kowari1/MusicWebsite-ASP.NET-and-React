@@ -2,10 +2,10 @@
 {
     public class Playlist
     {
-        public Playlist(string name, ICollection<Track>? tracks = null)
+        public Playlist(string name, DateTime сreatedAt)
         {
             Name = name;
-            Tracks = tracks;
+            CreatedAt = сreatedAt;
         }
 
         public Playlist() { }
@@ -17,6 +17,6 @@
         public int UserId { get; set; }
         public User User { get; set; }
 
-        public ICollection<Track>? Tracks { get; set; }
+        public ICollection<PlaylistTrack> PlaylistTracks { get; set; } = new List<PlaylistTrack>();
     }
 }
