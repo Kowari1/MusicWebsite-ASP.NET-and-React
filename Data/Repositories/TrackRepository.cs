@@ -1,4 +1,5 @@
-﻿using MusicWebsiteReact.Data.IRepositories;
+﻿using Microsoft.EntityFrameworkCore;
+using MusicWebsiteReact.Data.IRepositories;
 using MusicWebsiteReact.Models;
 
 namespace MusicWebsiteReact.Data.Repositories
@@ -10,6 +11,11 @@ namespace MusicWebsiteReact.Data.Repositories
         public TrackRepository(ApplicationDbContext db) : base(db)
         {
             _db = db;
+        }
+
+        public IQueryable<Track> GetAllAsQueryable()
+        {
+            return _db.Tracks.AsQueryable();
         }
     }
 }

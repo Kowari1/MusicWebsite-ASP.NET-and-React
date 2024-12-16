@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using MusicWebsiteReact.Data;
 using MusicWebsiteReact.Data.IRepositories;
 using MusicWebsiteReact.Data.Repositories;
@@ -26,15 +27,43 @@ namespace MusicWebsiteReact.Controllers
         [HttpGet("genres")]
         public IActionResult GetGenres()
         {
-            var genres = Enum.GetValues(typeof(Genre)).Cast<Genre>().Select(g => g.ToString()).ToList();
+            var genres = Enum.GetValues(typeof(Genre))
+                             .Cast<Genre>()
+                             .Select(g => new { Id = (int)g, Name = g.ToString() })
+                             .ToList();
+
             return Ok(genres);
         }
 
+
         [HttpGet]
-        public async Task<IActionResult> GetAllTracks()
+        public async Task<IActionResult> GetTracks([FromQuery] Genre? genre, [FromQuery] string? artist, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
-            var tracks = await _unitOfWork.TrackRepository.GetAllAsync();
-            return Ok(tracks);
+            var query = _unitOfWork.TrackRepository.GetAllAsQueryable();
+
+            if (genre != null)
+            {
+                query = query.Where(t => t.Genre == genre);
+            }
+
+            if (!string.IsNullOrEmpty(artist))
+            {
+                query = query.Where(t => t.Artist.Contains(artist));
+            }
+
+            var totalCount = await query.CountAsync();
+            var tracks = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return Ok(new
+            {
+                TotalCount = totalCount,
+                Page = page,
+                PageSize = pageSize,
+                Tracks = tracks
+            });
         }
 
         [HttpPost]

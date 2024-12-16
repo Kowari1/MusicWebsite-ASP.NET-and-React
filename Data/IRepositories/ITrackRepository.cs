@@ -4,5 +4,6 @@ namespace MusicWebsiteReact.Data.IRepositories
 {
     public interface ITrackRepository : IRepository<Track>
     {
+        IQueryable<Track> GetAllAsQueryable();
     }
 }
