@@ -1,11 +1,16 @@
 import { Counter } from "./components/Counter";
 import { FetchData } from "./components/FetchData";
 import { Home } from "./components/Home";
+import TrackList from './components/TrackList';
 
 const AppRoutes = [
   {
     index: true,
-    element: <Home />
+    element: <TrackList />
+  },
+  {
+    path: '/tracks',
+    element: <TrackList />,
   },
   {
     path: '/counter',
@@ -14,6 +19,10 @@ const AppRoutes = [
   {
     path: '/fetch-data',
     element: <FetchData />
+  },
+  {
+    index: true,
+    element: <TrackList />,
   }
 ];
 

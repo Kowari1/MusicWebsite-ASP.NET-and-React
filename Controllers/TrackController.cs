@@ -17,11 +17,14 @@ namespace MusicWebsiteReact.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IFileService _fileService;
+        private readonly ApplicationDbContext _db;
 
-        public TrackController(IUnitOfWork unitOfWork, IFileService fileService)
+        public TrackController(IUnitOfWork unitOfWork, IFileService fileService, ApplicationDbContext db)
         {
             _unitOfWork = unitOfWork;
             _fileService = fileService;
+            _db = db;
+
         }
 
         [HttpGet("genres")]
@@ -34,7 +37,6 @@ namespace MusicWebsiteReact.Controllers
 
             return Ok(genres);
         }
-
 
         [HttpGet]
         public async Task<IActionResult> GetTracks([FromQuery] Genre? genre, [FromQuery] string? artist, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
