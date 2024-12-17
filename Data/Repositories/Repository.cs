@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MusicWebsiteReact.Data.IRepositories;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace MusicWebsiteReact.Data.Repositories
@@ -29,6 +30,12 @@ namespace MusicWebsiteReact.Data.Repositories
         {
             IQueryable<T> values = _dbSet;
             return await values.Where(filter).FirstOrDefaultAsync();
+        }
+
+        public async Task<List<T>> GetListAsync(System.Linq.Expressions.Expression<Func<T, bool>> filter)
+        {
+            IQueryable<T> values = _dbSet;
+            return await values.Where(filter).ToListAsync();
         }
 
         public async Task<IEnumerable<T>> GetAllAsync()
