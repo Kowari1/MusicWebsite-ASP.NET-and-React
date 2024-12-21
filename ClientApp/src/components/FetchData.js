@@ -1,59 +1,92 @@
-import React, { Component } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
+import Player from "./Player";
+import axios from "axios";
+import DropdownGenres from "./DropdownGenres";
+import TrackItem from "./TrackItem";
+import './TrackList.css';
 
-export class FetchData extends Component {
-  static displayName = FetchData.name;
+const FetchData = () => {
+    const [currentTrack, setCurrentTrack] = useState(null);
+    const [tracks, setTracks] = useState([]);
+    const [selectedGenre, setSelectedGenre] = useState('');
+    const [searchTerm, setSearchTerm] = useState('');
+    const [isPlaying, setIsPlaying] = useState(false);
 
-  constructor(props) {
-    super(props);
-    this.state = { forecasts: [], loading: true };
-  }
+    const fetchTracks = useCallback(async () => {
+        try {
+            const response = await axios.get('https://localhost:7130/api/track', {
+                params: { genre: selectedGenre, search: searchTerm }
+            });
+            setTracks(response.data.tracks || []);
+        } catch (error) {
+            console.error('Ошибка загрузки треков:', error);
+        }
+    }, [selectedGenre, searchTerm]);
 
-  componentDidMount() {
-    this.populateWeatherData();
-  }
+    useEffect(() => {
+        fetchTracks();
+    }, [fetchTracks]);
 
-  static renderForecastsTable(forecasts) {
+    const handleTrackSelect = (track) => {
+        if (track !== currentTrack) {
+            setCurrentTrack(track);
+            setIsPlaying(true);
+        }        
+    };
+
+    const handleIsPlaying = (bool) => {
+        setIsPlaying(bool);
+    }
+
+    const handleNextTrack = () => {
+        if (currentTrack === null) {
+            handleTrackSelect(tracks[1]);
+        }
+        else {
+            const currentIndex = tracks.findIndex((t) => t.id === currentTrack.id);
+            if (currentIndex < tracks.length - 1) {
+                setCurrentTrack(tracks[currentIndex + 1]);
+            }
+        }
+    };
+
+    const handlePrevTrack = () => {
+        const currentIndex = tracks.findIndex((t) => t.id === currentTrack.id);
+        if (currentIndex > 0) {
+            setCurrentTrack(tracks[currentIndex - 1]);
+        }
+    };
+
     return (
-      <table className='table table-striped' aria-labelledby="tabelLabel">
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Temp. (C)</th>
-            <th>Temp. (F)</th>
-            <th>Summary</th>
-          </tr>
-        </thead>
-        <tbody>
-          {forecasts.map(forecast =>
-            <tr key={forecast.date}>
-              <td>{forecast.date}</td>
-              <td>{forecast.temperatureC}</td>
-              <td>{forecast.temperatureF}</td>
-              <td>{forecast.summary}</td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+        <div className="app">
+            <div className="filters">
+                <DropdownGenres onGenreSelect={setSelectedGenre} />
+                <input
+                    type="text"
+                    placeholder="Поиск по трекам"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)} />
+            </div>
+            <div className="track-list">
+                {tracks.map((track) => (
+                    <TrackItem key={track.id}
+                        track={track}
+                        onTrackSelect={handleTrackSelect}
+                        isPlaying={isPlaying}
+                        currentTrack={currentTrack}
+                        handleIsPlaying={handleIsPlaying}
+                    />
+                ))}
+            </div>
+            <Player
+                currentTrack={currentTrack}
+                onNextTrack={handleNextTrack}
+                onPrevTrack={handlePrevTrack}
+                isPlaying={isPlaying}
+                handleIsPlaying={handleIsPlaying}
+            />
+        </div>
     );
-  }
+};
 
-  render() {
-    let contents = this.state.loading
-      ? <p><em>Loading...</em></p>
-      : FetchData.renderForecastsTable(this.state.forecasts);
-
-    return (
-      <div>
-        <h1 id="tabelLabel" >Weather forecast</h1>
-        <p>This component demonstrates fetching data from the server.</p>
-        {contents}
-      </div>
-    );
-  }
-
-  async populateWeatherData() {
-    const response = await fetch('weatherforecast');
-    const data = await response.json();
-    this.setState({ forecasts: data, loading: false });
-  }
-}
+export default FetchData;

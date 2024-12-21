@@ -17,13 +17,11 @@ namespace MusicWebsiteReact.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IFileService _fileService;
-        private readonly ApplicationDbContext _db;
 
-        public TrackController(IUnitOfWork unitOfWork, IFileService fileService, ApplicationDbContext db)
+        public TrackController(IUnitOfWork unitOfWork, IFileService fileService)
         {
             _unitOfWork = unitOfWork;
             _fileService = fileService;
-            _db = db;
 
         }
 
@@ -39,31 +37,47 @@ namespace MusicWebsiteReact.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetTracks([FromQuery] Genre? genre, [FromQuery] string? artist, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        public async Task<IActionResult> GetTracks([FromQuery] Genre? genre, [FromQuery] string? searchTerm)
         {
             var query = _unitOfWork.TrackRepository.GetAllAsQueryable();
+            List<Track> testTracks = new List<Track>();
+
+            for (int i = 0; i < 40; i++)
+            {
+                testTracks.Add(new Track()
+                {
+                    Id = i + 10,
+                    Artist = "default",
+                    AudioFileUrl = "default",
+                    CoverFileUrl = "default",
+                    Duration = TimeSpan.FromSeconds(1),
+                    Genre = Genre.Rock,
+                    ReleaseDate = DateTime.Now,
+                    Title = $"default {i + 10}"
+                });
+            }
 
             if (genre != null)
             {
                 query = query.Where(t => t.Genre == genre);
             }
 
-            if (!string.IsNullOrEmpty(artist))
+            if (!string.IsNullOrEmpty(searchTerm))
             {
-                query = query.Where(t => t.Artist.Contains(artist));
+                query = query.Where(t => t.Artist.Contains(searchTerm));
+                query = query.Where(t => t.Genre.ToString().Contains(searchTerm));
+                query = query.Where(t => t.Title.Contains(searchTerm));
             }
 
             var totalCount = await query.CountAsync();
             var tracks = await query
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
                 .ToListAsync();
+
+            tracks.AddRange(testTracks);
 
             return Ok(new
             {
                 TotalCount = totalCount,
-                Page = page,
-                PageSize = pageSize,
                 Tracks = tracks
             });
         }
@@ -105,10 +119,6 @@ namespace MusicWebsiteReact.Controllers
         public async Task<IActionResult> UpdateTrack(int id, [FromForm] TrackDTO dto)
         {
             var track = await _unitOfWork.TrackRepository.GetByIdAsync(id);
-            if (track == null)
-            {
-                return NotFound("Track not found.");
-            }
 
             if (!string.IsNullOrEmpty(dto.Title))
                 track.Title = dto.Title;

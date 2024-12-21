@@ -1,0 +1,88 @@
+﻿.track-cover {
+    position: relative;
+    width: 130px;
+    height: 130px;
+}
+
+    .track-cover img {
+        width: 80%;
+        height: 80%;
+        object-fit: cover;
+    }
+
+.play-button {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+    border: none;
+    color: white;
+    font-size: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 1;
+}
+
+.playing {
+    opacity: 1;
+}
+
+.track-cover:hover .play-button {
+    opacity: 1;
+}
+
+.track-list {
+    display: grid;
+    grid-template-rows: repeat(3, 1fr); /* Три фиксированных ряда */
+    grid-auto-flow: column; /* Добавление колонок горизонтально */
+    gap: 10px; /* Отступы между треками */
+    overflow-x: auto; /* Горизонтальный скролл */
+    max-height: 850px; /* Фиксированная высота под три ряда */
+    padding: 10px 0; /* Одинаковые отступы сверху и снизу */
+}
+
+.track-item {
+    display: flex;
+    flex-direction: column; /* Элементы внутри идут по вертикали */
+    justify-content: center; /* Центрирование по вертикали */
+    align-items: center; /* Центрирование по горизонтали */
+    text-align: center; /* Выровнять текст */
+    width: 150px; /* Ширина карточки трека */
+    height: 250px; /* Высота карточки трека */
+    background-color: #f8f8f8; /* Фон для видимости */
+    border-radius: 8px; /* Скругление углов */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Тень для эффекта */
+}
+
+    
+
+    .track-item img {
+        width: 100%;
+        height: auto;
+        max-height: 150px;
+        object-fit: cover;
+    }
+
+    .track-item h3, .track-item p {
+        font-size: clamp(12px, 1.2vw, 16px);
+        margin: 4px 0;
+    }
+
+@media (max-width: 768px) {
+    .track-list {
+        grid-template-rows: repeat(2, 1fr); /* Два ряда на средних экранах */
+        max-height: 450px;
+    }
+}
+
+@media (max-width: 480px) {
+    .track-list {
+        grid-template-rows: 1fr; /* Один ряд на узких экранах */
+        max-height: 220px;
+    }
+}

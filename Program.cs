@@ -8,6 +8,7 @@ using MusicWebsiteReact.Data.IRepositories;
 using MusicWebsiteReact.Data.Repositories;
 using MusicWebsiteReact.Data;
 using MusicWebsiteReact.Middleware;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,6 +51,12 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Uploads")),
+    RequestPath = "/uploads"
+});
 
 app.UseStaticFiles();
 app.UseCors("AllowAllOrigins");

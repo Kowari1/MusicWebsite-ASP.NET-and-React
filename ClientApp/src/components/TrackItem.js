@@ -1,11 +1,8 @@
-﻿import React, { useState } from 'react';
-import './TrackItem.css';
-
-const TrackItem = ({ track }) => {
-    const [isPlaying, setIsPlaying] = useState(false);
+﻿const TrackItem = ({ track, onTrackSelect, isPlaying, currentTrack, handleIsPlaying }) => {
 
     const handlePlayPause = () => {
-        setIsPlaying(!isPlaying);
+        onTrackSelect(track);
+        handleIsPlaying(!isPlaying);
     };
 
     return (
@@ -13,25 +10,19 @@ const TrackItem = ({ track }) => {
             <div className="track-cover">
                 <img src={track.coverUrl} alt="Обложка" />
                 <button
-                    className={`play-button ${isPlaying ? 'playing' : ''}`}
+                    className={`play-button ${isPlaying & track === currentTrack ? 'playing' : ''}`}
                     onClick={handlePlayPause}
                 >
-                    {isPlaying ? '⏸' : '▶'}
+                    {isPlaying && track === currentTrack ? '⏸' : '▶'}
                 </button>
             </div>
-
             <div className="track-info">
-                <h3>{track.title}</h3>
-                <p>{track.artist}</p>
-                <span>{track.duration}</span>
-            </div>
-
-            <div className="track-actions">
-                <button>Добавить в плейлист</button>
-                <button>Добавить в очередь</button>
+                <div className="track-title">{track.title}</div>
+                <div className="track-artist">{track.artist}</div>
             </div>
         </div>
     );
 };
+
 
 export default TrackItem;
