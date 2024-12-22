@@ -51,7 +51,7 @@ namespace MusicWebsiteReact.Controllers
                     AudioFileUrl = "default",
                     CoverFileUrl = "default",
                     Duration = TimeSpan.FromSeconds(1),
-                    Genre = Genre.Rock,
+                    Genre = Genre.Jazz,
                     ReleaseDate = DateTime.Now,
                     Title = $"default {i + 10}"
                 });
@@ -64,9 +64,9 @@ namespace MusicWebsiteReact.Controllers
 
             if (!string.IsNullOrEmpty(searchTerm))
             {
-                query = query.Where(t => t.Artist.Contains(searchTerm));
-                query = query.Where(t => t.Genre.ToString().Contains(searchTerm));
-                query = query.Where(t => t.Title.Contains(searchTerm));
+                searchTerm = searchTerm.ToLower();
+
+                    query = query.Where(track => track.Title.ToLower().Contains(searchTerm) || track.Artist.ToLower().Contains(searchTerm));
             }
 
             var totalCount = await query.CountAsync();

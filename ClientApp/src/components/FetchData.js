@@ -4,6 +4,7 @@ import axios from "axios";
 import DropdownGenres from "./DropdownGenres";
 import TrackItem from "./TrackItem";
 import './TrackList.css';
+import './Player.css';
 
 const FetchData = () => {
     const [currentTrack, setCurrentTrack] = useState(null);
@@ -15,7 +16,7 @@ const FetchData = () => {
     const fetchTracks = useCallback(async () => {
         try {
             const response = await axios.get('https://localhost:7130/api/track', {
-                params: { genre: selectedGenre, search: searchTerm }
+                params: { genre: selectedGenre, searchTerm: searchTerm }
             });
             setTracks(response.data.tracks || []);
         } catch (error) {
@@ -39,9 +40,7 @@ const FetchData = () => {
     }
 
     const handleNextTrack = () => {
-        if (currentTrack === null) {
-            handleTrackSelect(tracks[1]);
-        }
+        if (checkTracks()) { }
         else {
             const currentIndex = tracks.findIndex((t) => t.id === currentTrack.id);
             if (currentIndex < tracks.length - 1) {
@@ -51,11 +50,22 @@ const FetchData = () => {
     };
 
     const handlePrevTrack = () => {
-        const currentIndex = tracks.findIndex((t) => t.id === currentTrack.id);
-        if (currentIndex > 0) {
-            setCurrentTrack(tracks[currentIndex - 1]);
+        if (checkTracks()) { }
+        else {
+            const currentIndex = tracks.findIndex((t) => t.id === currentTrack.id);
+            if (currentIndex > 0) {
+                setCurrentTrack(tracks[currentIndex - 1]);
+            }
         }
     };
+
+    function checkTracks() {
+        if (currentTrack === null && tracks !== null) {
+            handleTrackSelect(tracks[0]);
+            return true;
+        }
+        else return false;
+    }
 
     return (
         <div className="app">
