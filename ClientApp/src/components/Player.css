@@ -16,6 +16,11 @@
     flex: 1;
 }
 
+    .player-info img {
+        height: 100px;
+        width: 100px;
+    }
+
 .player-controls {
     flex: 1;
     display: flex;

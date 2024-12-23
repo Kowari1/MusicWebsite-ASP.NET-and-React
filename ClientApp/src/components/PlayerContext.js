@@ -1,92 +1,53 @@
-﻿import React, { createContext, useState, useEffect, useContext, useRef } from 'react';
+﻿import React, { createContext, useState, useContext, useCallback } from "react";
 
 const PlayerContext = createContext();
 
 export const PlayerProvider = ({ children }) => {
     const [currentTrack, setCurrentTrack] = useState(null);
-    const [queue, setQueue] = useState([]);
     const [isPlaying, setIsPlaying] = useState(false);
-    const [currentTime, setCurrentTime] = useState(0);
+    const [tracks, setTracks] = useState([]);
 
-    const audioRef = useRef(new Audio());
-
-    useEffect(() => {
-        const savedPlayerState = localStorage.getItem("playerState");
-        if (savedPlayerState) {
-            const { track, isPlaying, currentTime } = JSON.parse(savedPlayerState);
-            setCurrentTrack(track);
-            setIsPlaying(isPlaying);
-            audioRef.current.currentTime = currentTime;
+    const handleTrackSelect = useCallback((track) => { 
+        if (track === currentTrack && isPlaying === true) {
+            handlePlayPause();
         }
-    }, []);
+        else {          
+            setCurrentTrack(track);  
+            setIsPlaying(true);
+        }     
+    }, [currentTrack, tracks, isPlaying]);
 
-    useEffect(() => {
-        const playerState = {
-            track: currentTrack,
-            isPlaying,
-            currentTime: audioRef.current?.currentTime || 0,
-        };
-        localStorage.setItem("playerState", JSON.stringify(playerState));
+    const handlePlayPause = useCallback(() => {
+        setIsPlaying(!isPlaying);
     }, [currentTrack, isPlaying]);
 
-    const handleTimeUpdate = () => {
-        setCurrentTime(audioRef.current?.currentTime || 0);
-    };
-
-    useEffect(() => {
-        const audio = audioRef.current;
-        audio.addEventListener("timeupdate", handleTimeUpdate);
-        return () => {
-            audio.removeEventListener("timeupdate", handleTimeUpdate);
-        };
-    }, []);
-
-    const playTrack = (track) => {
-        if (currentTrack !== track) {
-            setCurrentTrack(track);
-            audioRef.current.src = track.url;
-            audioRef.current.play();
+    const handleNextTrack = useCallback(() => {
+        if (!currentTrack) return;
+        const currentIndex = tracks.findIndex((t) => t.id === currentTrack.id);
+        if (currentIndex < tracks.length - 1) {
+            handleTrackSelect(tracks[currentIndex + 1]);
         }
-        setIsPlaying(true);
-    };
+    }, [currentTrack, tracks]);
 
-    const togglePlay = () => {
-        if (isPlaying) {
-            audioRef.current.pause();
-        } else {
-            audioRef.current.play();
+    const handlePrevTrack = useCallback(() => {
+        if (!currentTrack) return;
+        const currentIndex = tracks.findIndex((t) => t.id === currentTrack.id);
+        if (currentIndex > 0) {
+            handleTrackSelect(tracks[currentIndex - 1]);
         }
-        setIsPlaying(!isPlaying);
-    };
-
-    const playNext = () => {
-        const currentIndex = queue.findIndex((track) => track === currentTrack);
-        const nextTrack = queue[(currentIndex + 1) % queue.length];
-        playTrack(nextTrack);
-    };
-
-    const playPrev = () => {
-        const currentIndex = queue.findIndex((track) => track === currentTrack);
-        const prevTrack = queue[(currentIndex - 1 + queue.length) % queue.length];
-        playTrack(prevTrack);
-    };
-
-    const updateQueue = (tracks) => {
-        setQueue(tracks);
-    };
+    }, [currentTrack, tracks]);
 
     return (
         <PlayerContext.Provider
             value={{
                 currentTrack,
-                queue,
                 isPlaying,
-                playTrack,
-                togglePlay,
-                updateQueue,
-                currentTime,
-                playNext,
-                playPrev,
+                tracks,
+                setTracks,
+                handleTrackSelect,
+                handlePlayPause,
+                handleNextTrack,
+                handlePrevTrack,
             }}
         >
             {children}

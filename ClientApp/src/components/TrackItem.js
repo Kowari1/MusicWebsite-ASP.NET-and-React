@@ -1,17 +1,17 @@
-﻿const TrackItem = ({ track, onTrackSelect, isPlaying, currentTrack, handleIsPlaying }) => {
+﻿import React from 'react';
+import { usePlayer } from "./PlayerContext";
 
-    const handlePlayPause = () => {
-        onTrackSelect(track);
-        handleIsPlaying(!isPlaying);
-    };
+const TrackItem = ({ track }) => {
+    const { handleTrackSelect, currentTrack, isPlaying } = usePlayer();
+
 
     return (
         <div className="track-item">
             <div className="track-cover">
-                <img src={track.coverUrl} alt="Обложка" />
+                <img src={`https://localhost:7130${track?.coverFileUrl}`} alt="Обложка" />
                 <button
-                    className={`play-button ${isPlaying & track === currentTrack ? 'playing' : ''}`}
-                    onClick={handlePlayPause}
+                    className={`play-button ${isPlaying && track === currentTrack ? 'playing' : ''}`}
+                    onClick={() => handleTrackSelect(track) }
                 >
                     {isPlaying && track === currentTrack ? '⏸' : '▶'}
                 </button>
@@ -23,6 +23,5 @@
         </div>
     );
 };
-
 
 export default TrackItem;
