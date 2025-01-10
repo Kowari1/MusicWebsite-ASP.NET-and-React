@@ -18,9 +18,9 @@ namespace MusicWebsiteReact.Services
 
         private static readonly Dictionary<StorageType, string[]> ValidExtensions = new()
         {
-            { StorageType.ProfileImage, new[] { ".jpg", ".jpeg", ".png" } },
+            { StorageType.ProfileImage, new[] { ".jpg", ".jpeg", ".png" , ".jfif" } },
             { StorageType.Audio, new[] { ".mp3", ".wav" } },
-            { StorageType.Cover, new[] { ".jpg", ".jpeg", ".png" } }
+            { StorageType.Cover, new[] { ".jpg", ".jpeg", ".png" ,".jfif" } }
         };
 
         public FileService(

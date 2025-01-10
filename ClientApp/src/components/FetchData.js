@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { usePlayer } from "./PlayerContext";
-import axios from "axios";
+import axios from "./axiosSetup";
 import DropdownGenres from "./DropdownGenres";
 import TrackItem from "./TrackItem";
 import Player from "./Player";
@@ -16,7 +16,7 @@ const FetchData = () => {
     useEffect(() => {
         const fetchTracks = async () => {
             try {
-                const response = await axios.get('https://localhost:7130/api/track', {
+                const response = await axios.get('/api/track', {
                     params: { genre: selectedGenre, searchTerm },
                 });
                 setTracks(response.data.tracks || []);

@@ -1,22 +1,44 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import AppRoutes from './AppRoutes';
 import { Layout } from './components/Layout';
-import './custom.css';
+import  Header  from './components/Header';
+import  AuthModal  from './components/AuthModal';
+import { AuthProvider } from './components/AuthContext';
+import "./components/AuthModal.css";
 
-export default class App extends Component {
-  static displayName = App.name;
 
-  render() {
+export const App = () => {
+    const [modalType, setModalType] = useState(null);
+
+    const openAuthModal = (type) => {
+        console.log(type);
+        setModalType(type)
+    };
+    const closeAuthModal = () => setModalType(null);
+
     return (
-      <Layout>
-        <Routes>
-          {AppRoutes.map((route, index) => {
-            const { element, ...rest } = route;
-            return <Route key={index} {...rest} element={element} />;
-          })}
-        </Routes>
-      </Layout>
+        <AuthProvider>
+            <Header openAuthModal={openAuthModal} />
+            {modalType && (
+                <AuthModal
+                    type={modalType}
+                    onClose={closeAuthModal}
+                    switchTo={setModalType}
+                />
+            )}
+            <main>{
+                <Layout>
+                    <Routes>
+                        {AppRoutes.map((route, index) => {
+                            const { element, ...rest } = route;
+                            return <Route key={index} {...rest} element={element} />;
+                        })}
+                    </Routes>                   
+                </Layout>
+            }</main>
+        </AuthProvider>
     );
-  }
-}
+};
+
+export default App;

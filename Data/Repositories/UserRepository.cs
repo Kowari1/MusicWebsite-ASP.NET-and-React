@@ -1,4 +1,5 @@
-﻿using MusicWebsiteReact.Data.IRepositories;
+﻿using Microsoft.EntityFrameworkCore;
+using MusicWebsiteReact.Data.IRepositories;
 using MusicWebsiteReact.Models;
 
 namespace MusicWebsiteReact.Data.Repositories
@@ -14,12 +15,12 @@ namespace MusicWebsiteReact.Data.Repositories
 
         public async Task<User> GetByEmailAsync(string Email)
         {
-            return await _dbSet.FindAsync(Email);
+            return await _dbSet.FirstAsync(u => u.Email == Email);
         }
 
         public async Task<bool> UserExistsAsync(string Email)
         {
-            return await _dbSet.FindAsync(Email) == null;
+            return await _dbSet.AnyAsync(u => u.Email == Email);
         }
     }
 }

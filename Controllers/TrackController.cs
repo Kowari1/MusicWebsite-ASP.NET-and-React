@@ -42,7 +42,7 @@ namespace MusicWebsiteReact.Controllers
             var query = _unitOfWork.TrackRepository.GetAllAsQueryable();
             List<Track> testTracks = new List<Track>();
 
-            for (int i = 0; i < 40; i++)
+            for (int i = 0; i < 30; i++)
             {
                 testTracks.Add(new Track()
                 {
@@ -185,7 +185,7 @@ namespace MusicWebsiteReact.Controllers
                 return BadRequest($"File deletion error: {ex.Message}");
             }
 
-            _unitOfWork.TrackRepository.DeleteAsync(track);
+            await _unitOfWork.TrackRepository.DeleteAsync(track);
             await _unitOfWork.SaveAsync();
 
             return Ok("Track deleted successfully.");

@@ -29,7 +29,7 @@ namespace MusicWebsiteReact.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register(UserRegisterDTO dto)
+        public async Task<IActionResult> Register([FromForm] UserRegisterDTO dto)
         {
             if (await _unitOfWork.UserRepository.UserExistsAsync(dto.Email))
             {

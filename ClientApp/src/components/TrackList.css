@@ -38,28 +38,31 @@
 
 .track-list {
     display: grid;
-    grid-template-rows: repeat(3, 1fr); /* Три фиксированных ряда */
-    grid-auto-flow: column; /* Добавление колонок горизонтально */
-    gap: 10px; /* Отступы между треками */
+    grid-template-rows: repeat(3, min-content); /* Три строки */
+    grid-auto-flow: column; /* Заполнение по столбцам */
+    gap: 10px; /* Минимальные зазоры */
     overflow-x: auto; /* Горизонтальный скролл */
-    max-height: 850px; /* Фиксированная высота под три ряда */
-    padding: 10px 0; /* Одинаковые отступы сверху и снизу */
+    overflow-y: hidden;
+    padding: 10px;
+    max-height: calc(3 * 260px + 2 * 10px); /* Высота для 3 строк */
+    box-sizing: border-box;
+    align-items: start;
+    justify-content: start; /* Прижимаем к левому краю */
 }
 
 .track-item {
     display: flex;
-    flex-direction: column; /* Элементы внутри идут по вертикали */
-    justify-content: center; /* Центрирование по вертикали */
-    align-items: center; /* Центрирование по горизонтали */
-    text-align: center; /* Выровнять текст */
-    width: 150px; /* Ширина карточки трека */
-    height: 250px; /* Высота карточки трека */
-    background-color: #f8f8f8; /* Фон для видимости */
-    border-radius: 8px; /* Скругление углов */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Тень для эффекта */
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 150px;
+    height: 250px;
+    background-color: #f8f8f8;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    flex-shrink: 0; /* Предотвращаем сжатие */
 }
-
-    
 
     .track-item img {
         width: 100%;
@@ -73,16 +76,26 @@
         margin: 4px 0;
     }
 
-@media (max-width: 768px) {
+@media (max-width: 768px), (max-height: 1050px) {
     .track-list {
-        grid-template-rows: repeat(2, 1fr); /* Два ряда на средних экранах */
+        grid-template-rows: repeat(2, 1fr);
         max-height: 450px;
+    }
+
+    .track-item {
+        height: 200px;
+        width: 100px;
+    }
+
+    .track-cover {
+        width: 90px;
+        height: 90px;
     }
 }
 
 @media (max-width: 480px) {
     .track-list {
-        grid-template-rows: 1fr; /* Один ряд на узких экранах */
+        grid-template-rows: 1fr;
         max-height: 220px;
     }
 }

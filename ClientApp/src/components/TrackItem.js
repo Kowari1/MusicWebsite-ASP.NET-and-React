@@ -8,7 +8,7 @@ const TrackItem = ({ track }) => {
     return (
         <div className="track-item">
             <div className="track-cover">
-                <img src={`https://localhost:7130${track?.coverFileUrl}`} alt="Обложка" />
+                <img src={track?.coverFileUrl} alt="Cover" />
                 <button
                     className={`play-button ${isPlaying && track === currentTrack ? 'playing' : ''}`}
                     onClick={() => handleTrackSelect(track) }

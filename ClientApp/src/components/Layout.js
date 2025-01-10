@@ -1,18 +1,9 @@
-import React, { Component } from 'react';
-import { Container } from 'reactstrap';
-import { NavMenu } from './NavMenu';
+import React from 'react';
 
-export class Layout extends Component {
-  static displayName = Layout.name;
-
-  render() {
+export const Layout = ({ children, onOpenAuthModal }) => {
     return (
-      <div>
-        <NavMenu />
-        <Container>
-          {this.props.children}
-            </Container>
-      </div>
+        <>
+            <main>{children}</main>
+        </>
     );
-  }
-}
+};
