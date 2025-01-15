@@ -19,6 +19,9 @@ const AuthModal = ({ type, onClose, switchTo }) => {
             if (type === "login") {
                 console.log(formData);
                 const { data } = await axios.post('/api/User/login', formData);
+                console.log(console.log(data));
+                localStorage.setItem("authToken", data.token);
+                localStorage.getItem("authToken")
                 login({ ...data.user, token: data.token });
                 onClose();
             } else if (type === "register") {

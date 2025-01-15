@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using MusicWebsiteReact.Data.IRepositories;
 using MusicWebsiteReact.DTO;
@@ -86,7 +88,14 @@ namespace MusicWebsiteReact.Controllers
             return Ok(new { user.Id, user.Name, user.Email, user.Role });
         }
 
-        private string GenerateJwtToken(User user)
+        [HttpPost("logout")]
+        public IActionResult Logout()
+        {
+            HttpContext.SignOutAsync();
+            return Ok();
+        }
+
+        private async Task<string> GenerateJwtToken(User user)
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -99,11 +108,26 @@ namespace MusicWebsiteReact.Controllers
                 new Claim(ClaimTypes.Role, user.Role)
             };
 
+            var claimsIdentity = new ClaimsIdentity(
+                claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+            var authProperties = new AuthenticationProperties
+            {
+                IsPersistent = true,
+                ExpiresUtc = DateTime.UtcNow.AddDays(30),
+                AllowRefresh = true
+            };
+
+            await HttpContext.SignInAsync(
+            CookieAuthenticationDefaults.AuthenticationScheme,
+            new ClaimsPrincipal(claimsIdentity),
+            authProperties);
+
             var token = new JwtSecurityToken(
                 _configuration["Jwt:Issuer"],
                 _configuration["Jwt:Issuer"],
                 claims,
-                expires: DateTime.Now.AddHours(1),
+                expires: DateTime.Now.AddHours(12),
                 signingCredentials: creds
             );
 

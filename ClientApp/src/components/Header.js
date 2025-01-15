@@ -8,14 +8,14 @@ const Header = ({ openAuthModal }) => {
         <header>
             <div className="logo">MusicWeb</div>
             <nav>
-                {/* Навигация */}
+                {}
             </nav>
             <div className="auth">
                 {!user ? (
                     <button onClick={() => openAuthModal("login")}>Авторизация</button>
                 ) : (
                     <div className="profile-menu">
-                            <img src={user.profileImage || "https://localhost:7130/uploads/Profiles/default.png"} alt="Profile" />
+                            <img className="avatar" src={user.profileImage || "https://localhost:7130/uploads/Profiles/default.png"} alt="Profile" />
                         <span>{user.name}</span>
                         <div className="dropdown">
                             <button onClick={logout}>Выйти</button>

@@ -9,6 +9,8 @@ using MusicWebsiteReact.Data.Repositories;
 using MusicWebsiteReact.Data;
 using MusicWebsiteReact.Middleware;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,6 +51,17 @@ builder.Services.AddCors(options =>
               .AllowAnyHeader();
     });
 });
+
+builder.Services.AddAuthentication(options =>
+{
+
+    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+
+    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+
+    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+}
+).AddCookie();
 
 var app = builder.Build();
 
